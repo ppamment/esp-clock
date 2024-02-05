@@ -6,9 +6,10 @@ This project involves implementing a clock using a 28BYJ-48 stepper motor driven
 
 ### Flashing the MicroPython Firmware
 
-1. **Flash the MicroPython firmware onto your ESP32.** Follow the steps outlined in the official documentation: [MicroPython ESP32 Tutorial](https://docs.micropython.org/en/latest/esp32/tutorial/intro.html)
+1. **Flash the MicroPython firmware onto your ESP32.** 
+Follow the steps outlined in the official documentation: [MicroPython ESP32 Tutorial](https://docs.micropython.org/en/latest/esp32/tutorial/intro.html)
 
-   Alternatively, you can use the Thonny IDE, which streamlines the process by handling firmware flashing, file transfer, and connecting to the REPL via USB and Wi-Fi. For details, visit: [Thonny IDE](https://thonny.org/), specifically the `Run -> Configure Interpreter` section.
+Alternatively, you can use the Thonny IDE, which streamlines the process by handling firmware flashing, file transfer, and connecting to the REPL via USB and Wi-Fi. For details, visit: [Thonny IDE](https://thonny.org/), specifically the `Run -> Configure Interpreter` section.
 
 ### Establishing Connections
 
