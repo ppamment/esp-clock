@@ -7,7 +7,10 @@ class NVSStore:
         self.nvs = NVS(namespace)
 
     def get(self, key = "time") -> int:
-        return self.nvs.get_i32(key)
+        try:
+            return self.nvs.get_i32(key)
+        except:
+            return 0
 
     def set(self, key: str, value: int):
         self.nvs.set_i32(key, value)
@@ -19,7 +22,10 @@ class FileStore:
         self.file = open(filename, "r+")
 
     def get(self, key: str) -> int:
-        return int(self.file.read().strip())
+        try:
+            return int(self.file.read().strip())
+        except:
+            return 0
 
     def set(self, key: str, value: int):
         self.file.seek(0)

@@ -7,7 +7,9 @@ wlan = network.WLAN(network.STA_IF)
 wlan.active(True)
 if not wlan.isconnected():
     wlan.connect(webrepl_cfg.WLAN_SSID, webrepl_cfg.WLAN_PASS)
-
+while not wlan.isconnected():
+    ...
+    
 CYCLES_PER_REVOLUTION = 32 / 4
 MOTOR_GEAR_RATIO = 64
 CLOCK_GEAR_RATIO = 90 / 12
