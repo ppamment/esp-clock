@@ -13,6 +13,7 @@ class Clock:
     """
     store = None    
     minutes: int
+    microsteps: int
     
     def __init__(self, stepper: Stepper, store, timer_no: int = 0):
         self.stepper = stepper
@@ -35,7 +36,7 @@ class Clock:
         difference = (target_minutes - self.minutes) % 720 # 720 minutes in 12 hrs
         minutes_to_move = difference - 720 if difference > 360 else difference
         print(f"Moving {minutes_to_move}...")
-        self.stepper.step(minutes_to_move/60, rpm, 10)
+        self.stepper.step(minutes_to_move/60, rpm)
         self.minutes = target_minutes
         self.write_position(target_minutes)
     

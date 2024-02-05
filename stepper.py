@@ -1,5 +1,5 @@
 from machine import PWM
-import time
+import asyncio, time
 
 MAX_DUTY = (2**16 - 1) * 3 // 4
 
@@ -27,12 +27,13 @@ class Stepper():
     Uses a PWM based microstepping approach that works even with stepper drivers that do not support microstepping.
     Simple transistors are sufficient to achieve good results.
     """
-    def __init__(self, pins: list(PWM), steps_per_rotation, mode = HALF_STEP_DRIVE):
+    def __init__(self, pins: list(PWM), cycles_per_rotation, mode = HALF_STEP_DRIVE, microsteps = 8):
         self.mode = mode
         self.pins = pins
-        self.steps_per_rotation = steps_per_rotation
+        self.cycles_per_rotation = cycles_per_rotation
+        self.microsteps = microsteps
         
-    def step(self, rotations, rotations_per_minute, microsteps = 16):
+    def step(self, rotations, rotations_per_minute):
         """Rotate specified number of full turns. +ve clockwise, -ve counter-clockwise"""
         try:
           if rotations < 0:
@@ -44,9 +45,9 @@ class Stepper():
           if rotations >= float("inf"):
             steps = rotations
             us = rotations
-            us_per_step = 1e6 / (self.steps_per_rotation * rotations_per_minute / 60) 
+            us_per_step = 1e6 / (self.cycles_per_rotation * rotations_per_minute / 60) 
           else:
-              steps = int(rotations * self.steps_per_rotation)
+              steps = int(rotations * self.cycles_per_rotation)
               us = (rotations / (rotations_per_minute / 60)) * 1e6
               us_per_step = us / steps
               
@@ -58,13 +59,13 @@ class Stepper():
           
           start = lap = time.ticks_us()
           while counter < steps:
-              sleep_time = round(time.ticks_diff(time.ticks_add(start, round(us_per_step * (counter+1))), lap) / (len(self.mode) * microsteps))
+              sleep_time = round(time.ticks_diff(time.ticks_add(start, round(us_per_step * (counter+1))), lap) / (len(self.mode) * self.microsteps))
               prev_bit = [0] * len(self.pins)
               for bit in self.mode[::direction]:
-                  for i in range(microsteps):
+                  for i in range(self.microsteps):
                       # move frin current duty to the next in small steps 1/10th at a time
                       for j, pin in enumerate(self.pins):
-                          pin.duty_u16(((microsteps-1-i)*pin.duty_u16() + (i+1)*bit[j]*MAX_DUTY) // microsteps)
+                          pin.duty_u16(((self.microsteps-1-i)*pin.duty_u16() + (i+1)*bit[j]*MAX_DUTY) // self.microsteps)
                       time.sleep_us(sleep_time)
                   prev_bit = bit
               counter = counter + 1
